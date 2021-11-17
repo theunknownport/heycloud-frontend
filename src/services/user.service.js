@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const API_URL = "http://localhost:8000/";
+const API_URL = "http://192.168.199.128:8000/";
 
 const getPublicContent = () => {
   return axios.get(API_URL + "all");
@@ -24,7 +24,11 @@ const listRecentTasks = () => {
 };
 
 const listVps = () => {
-  return axios.get(API_URL + "vms", { headers: authHeader() });
+  return axios.get(API_URL + "vps", { headers: authHeader() });
+};
+
+const listNgrokTokens = () => {
+  return axios.get(API_URL + "ngrok_tokens", { headers: authHeader() });
 };
 
 const clearTasks = () => {
@@ -64,4 +68,5 @@ export default {
   getPortalSession,
   changePassword,
   listVps,
+  listNgrokTokens,
 };

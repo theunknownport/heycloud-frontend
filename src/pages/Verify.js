@@ -2,11 +2,15 @@ import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Link, Redirect } from "react-router-dom";
-
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
+import { parsePhoneNumber } from 'libphonenumber-js'
+import querySearch from "stringquery";
+import EarlyFooter from "../components/EarlyFooter";
 
 
 
@@ -27,22 +31,27 @@ const required = (value) => {
 };
 
 
-const Register = (props) => {
+const Verify = (props) => {
   const form = useRef();
   const checkBtn = useRef();
 
   const [code, setCode] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState((() => {
+    if (querySearch(props.location.search) != "") {
+      return querySearch(props.location.search).phone
+    } else {
+      return ""
+    }
+  })());
   const [successful, setSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [phoneValidMessage, setPhoneValidMessage] = useState("initial")
   const { isLoggedIn } = useSelector(state => state.auth);
   const { message } = useSelector(state => state.message);
   const dispatch = useDispatch();
 
-  const onChangePhone = (e) => {
-    const phone = e.target.value;
-    setPhone(phone);
+  const onChangePhone = value => {
+    setPhone(value)
   };
 
   const onChangeCode = (e) => {
@@ -50,9 +59,6 @@ const Register = (props) => {
     setCode(code);
   };
 
-  
-
-  
 
   const handleVerify = (e) => {
     e.preventDefault();
@@ -61,7 +67,7 @@ const Register = (props) => {
     setLoading(true);
     form.current.validateAll();
 
-    if (checkBtn.current.context._errors.length === 0) {
+    if (checkBtn.current.context._errors.length === 0 && phoneValidMessage == "") {
       dispatch(verify(phone,code))
         .then(() => {
           setSuccessful(true);
@@ -79,10 +85,31 @@ const Register = (props) => {
   };
 
 
+  const validateNumber = (value) => {
+    if(value === '' && phoneValidMessage != "initial"){
+      return 'Please enter phone number'
+    }
+    try {
+      const num = parsePhoneNumber(value)
+      if (!num.isValid()) {
+        setPhoneValidMessage('Invalid phone number.')
+        return
+      }
+    } catch (e) {
+      if (phoneValidMessage == "initial") {
+        return true;
+      }
+      setPhoneValidMessage('This field is required')
+      return
+    }
+    setPhoneValidMessage('');
+    return true;
+  }
+  
+
   if (isLoggedIn) {
     return <Redirect to="/dashboard" />;
   }
-  
   return (
     <div className="bg-gradient-primary" style={{'margin': '0','height': '100%','width': '100%','min-height': '100%'}}>
       <div className="container">
@@ -101,16 +128,33 @@ const Register = (props) => {
                               </div>
                               <Form className="user" onSubmit={handleVerify} ref={form} style={{margin: '18px'}}>
                                   <div className="mb-3">
-                                    <Input
-                                    id="exampleInputPhone"
-                                    type="phone"
-                                    className="form-control  form-control-user"
-                                    placeholder="Phone"
-                                    name="phone"
-                                    value={phone}
-                                    onChange={onChangePhone}
-                                    validations={[required]}
+                                    <PhoneInput
+                                      isValid={(value, country) => {
+                                        return validateNumber(`+${value}`)
+                                      }}
+                                      enableSearch
+                                      disableSearchIcon
+                                      value={phone}
+                                      onChange={onChangePhone}
+                                      inputClass="form-control  form-control-user w-100"
+                                      inputStyle={{paddingLeft: '18%', height: '20%', borderColor: "#d1d3e2"}}
+                                      dropdownStyle={{textAlign: 'left', color: 'black'}}
+                                      buttonStyle={{'border-radius': '10rem', color: 'unset !important', 'background-color': 'unset !important', padding: '2%'}}
+                                      buttonClass="btn btn-link btn-sm   :hover{color: unset !important; background-color: unset !important;}"
+                                      id="exampleInputPhone"
+                                      placeholder="Phone"
                                     />
+                                    {(() => {
+                                      if (phoneValidMessage != "" && phoneValidMessage != "initial") {
+                                        return (
+                                          <div role="alert" style={{"marginTop":"5px","color":"red"}}>
+                                          {phoneValidMessage}
+                                        </div>
+                                        )
+                                      } else {
+                                        return ""
+                                      }
+                                    })()}
                                   </div>
                                   <div className="mb-3">
                                     <Input
@@ -148,13 +192,7 @@ const Register = (props) => {
               </div>
           </div>
         </div>
-        <div className="d-xl-flex mx-auto justify-content-xl-center sidebar-brand-text mx-3"><br>
-          </br>
-          <Link to={{ pathname: "/homepage" }}>
-            <img src={logo} alt="Logo" className="d-xl-flex mx-auto justify-content-xl-center"/>
-          </Link>
-          <br>
-          </br></div>
+          <EarlyFooter />                          
           <script src="assets/bootstrap/js/bootstrap.min.js"></script>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.8/swiper-bundle.min.js"></script>
         </div>
@@ -163,4 +201,4 @@ const Register = (props) => {
   );
 };
 
-export default Register;
+export default Verify;

@@ -1,8 +1,10 @@
 import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { parsePhoneNumber } from 'libphonenumber-js'
 import { Redirect, Link } from "react-router-dom";
-
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
@@ -28,17 +30,17 @@ const SendCode = (props) => {
   const form = useRef();
   const checkBtn = useRef();
 
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(null);
   const [successful, setSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [phoneValidMessage, setPhoneValidMessage] = useState("initial")
 
   const { isLoggedIn } = useSelector(state => state.auth);
   const { message } = useSelector(state => state.message);
   const dispatch = useDispatch();
 
-  const onChangePhone = (e) => {
-    const phone = e.target.value;
-    setPhone(phone);
+  const onChangePhone = value => {
+    setPhone(value)
   };
 
 
@@ -54,26 +56,51 @@ const SendCode = (props) => {
     setLoading(true);
     form.current.validateAll();
 
-    if (checkBtn.current.context._errors.length === 0) {
+    if (checkBtn.current.context._errors.length === 0 && phoneValidMessage == "") {
       dispatch(sendCode(phone))
         .then(() => {
           setSuccessful(true);
           setLoading(false);
-          global.window && (global.window.location.href = '/reset-password');
+          props.history.push({
+            pathname: '/reset-password',
+            search:'phone=' + phone,
+          });
         })
         .catch(() => {
-          setSuccessful(false);
+          setSuccessful(true);
           setLoading(false);
-        });
+          <Redirect to="/reset-password"/>
+        })
     } else {
+      setSuccessful(true)
       setLoading(false);
+      props.history.push({
+        pathname: '/reset-password',
+        search:'phone=' + phone,
+      });
     }
     
   };
 
-
-  if (isLoggedIn) {
-    return <Redirect to="/dashboard" />;
+  const validateNumber = (value) => {
+    if(value === '' && phoneValidMessage != "initial"){
+      return 'Please enter phone number'
+    }
+    try {
+      const num = parsePhoneNumber(value)
+      if (!num.isValid()) {
+        setPhoneValidMessage('Invalid phone number.')
+        return
+      }
+    } catch (e) {
+      if (phoneValidMessage == "initial") {
+        return true;
+      }
+      setPhoneValidMessage('This field is required')
+      return
+    }
+    setPhoneValidMessage('');
+    return true;
   }
   
   return (
@@ -93,16 +120,33 @@ const SendCode = (props) => {
                               </div>
                               <Form className="user" onSubmit={handleSendCode} ref={form} style={{margin: '18px'}}>
                                   <div className="mb-3">
-                                    <Input
-                                    id="exampleInputPhone"
-                                    type="phone"
-                                    className="form-control  form-control-user"
-                                    placeholder="Phone"
-                                    name="phone"
+                                  <PhoneInput
+                                    isValid={(value, country) => {
+                                      return validateNumber(`+${value}`)
+                                    }}
+                                    enableSearch
+                                    disableSearchIcon
                                     value={phone}
                                     onChange={onChangePhone}
-                                    validations={[required]}
-                                    />
+                                    inputClass="form-control  form-control-user w-100"
+                                    inputStyle={{paddingLeft: '18%', height: '20%', borderColor: "#d1d3e2"}}
+                                    dropdownStyle={{textAlign: 'left', color: 'black'}}
+                                    buttonStyle={{'border-radius': '10rem', color: 'unset !important', 'background-color': 'unset !important', padding: '2%'}}
+                                    buttonClass="btn btn-link btn-sm   :hover{color: unset !important; background-color: unset !important;}"
+                                    id="exampleInputPhone"
+                                    placeholder="Phone"
+                                  />
+                                  {(() => {
+                                    if (phoneValidMessage != "" && phoneValidMessage != "initial") {
+                                      return (
+                                        <div role="alert" style={{"marginTop":"5px","color":"red"}}>
+                                        {phoneValidMessage}
+                                      </div>
+                                      )
+                                    } else {
+                                      return ""
+                                    }
+                                  })()}
                                   </div>
                                     
                                   

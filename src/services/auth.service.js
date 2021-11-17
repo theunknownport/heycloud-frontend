@@ -1,8 +1,9 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/users";
+const API_URL = "http://192.168.199.128:8000/users";
 
 const register = (name, prename, email, password, phone) => {
+  phone = "+" + phone
   return axios.post(API_URL, {
     name,
     prename,
@@ -28,6 +29,7 @@ const login = (email, password) => {
 };
 
 const verify = (phone, code) => {
+  phone = "+" + phone
   return axios
     .post(API_URL + "/verify", {
       phone,
@@ -40,6 +42,7 @@ const verify = (phone, code) => {
 };
 
 const sendCode = (phone) => {
+  phone = "+" + phone
   return axios
     .post(API_URL + "/forgot-password/send", {
       phone,
@@ -51,6 +54,7 @@ const sendCode = (phone) => {
 };
 
 const resetPassword = (phone, code, password) => {
+  phone = "+" + phone
   return axios.post(API_URL + "/forgot-password", {
     code,
     password,

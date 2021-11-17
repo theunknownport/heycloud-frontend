@@ -25,6 +25,7 @@ import EventBus from "./common/EventBus";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
 import VPS from "./pages/Vps";
+import Security from "./pages/Security"
 
 
 
@@ -93,6 +94,7 @@ const App = () => {
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/profile" component={Profile} />
         <Route path="/vps" component={VPS} />
+        <Route path="/security" component={Security} />
       </Switch>
     </Router>
     </>

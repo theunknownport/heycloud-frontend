@@ -6,6 +6,7 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 
+import EarlyFooter from "../components/EarlyFooter";
 import logo from './../assets/img/logos/logo-white-small.png'
 import illustration from './../assets/img/illustrations/server1.png'
 
@@ -66,8 +67,7 @@ const Login = (props) => {
     if (checkBtn.current.context._errors.length === 0) {
       dispatch(login(email, password))
         .then(() => {
-          props.history.push("/dashboard");
-          <Redirect to="/dashboard" />;
+          props.history.push("/dashboard?preloader=true");
         })
         .catch(() => {
           setLoading(false);
@@ -119,7 +119,7 @@ const Login = (props) => {
                                               placeholder="Password"
                                               value={password}
                                               onChange={onChangePassword}
-                                              validations={[required, vpassword]}
+                                              validations={[vpassword, required]}
                                               />
                                           </div>
                                           <div className="mb-3">
@@ -149,13 +149,7 @@ const Login = (props) => {
               </div>
           </div>
       </div>
-      <div className="d-xl-flex mx-auto justify-content-xl-center sidebar-brand-text mx-3"><br>
-      </br>
-      <Link to={{ pathname: "/homepage" }}>
-        <img src={logo} alt="Logo" className="d-xl-flex mx-auto justify-content-xl-center"/>
-      </Link>
-      <br>
-      </br></div>
+      <EarlyFooter />
       <script src="assets/bootstrap/js/bootstrap.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.8/swiper-bundle.min.js"></script>
     </div>    

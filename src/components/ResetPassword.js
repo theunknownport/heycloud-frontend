@@ -2,11 +2,13 @@ import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Redirect, Link } from "react-router-dom";
-
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
-
+import { parsePhoneNumber } from 'libphonenumber-js'
+import querySearch from "stringquery";
 
 
 import { resetPassword } from "../actions/auth";
@@ -61,10 +63,17 @@ const ResetPassword = (props) => {
   const form = useRef();
   const checkBtn = useRef();
 
+  const [phoneValidMessage, setPhoneValidMessage] = useState("initial")
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [code, setCode] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState((() => {
+    if (querySearch(props.location.search) != "") {
+      return querySearch(props.location.search).phone
+    } else {
+      return ""
+    }
+  })());
   const [successful, setSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -72,9 +81,8 @@ const ResetPassword = (props) => {
   const { message } = useSelector(state => state.message);
   const dispatch = useDispatch();
 
-  const onChangePhone = (e) => {
-    const phone = e.target.value;
-    setPhone(phone);
+  const onChangePhone = value => {
+    setPhone(value)
   };
 
   const onChangeCode = (e) => {
@@ -99,7 +107,7 @@ const ResetPassword = (props) => {
     setLoading(true);
     form.current.validateAll();
 
-    if (checkBtn.current.context._errors.length === 0) {
+    if (checkBtn.current.context._errors.length === 0 && phoneValidMessage == "") {
       dispatch(resetPassword(phone))
         .then(() => {
           setSuccessful(true);
@@ -115,6 +123,26 @@ const ResetPassword = (props) => {
     
   };
 
+  const validateNumber = (value) => {
+    if(value === '' && phoneValidMessage != "initial"){
+      return 'Please enter phone number'
+    }
+    try {
+      const num = parsePhoneNumber(value)
+      if (!num.isValid()) {
+        setPhoneValidMessage('Invalid phone number.')
+        return
+      }
+    } catch (e) {
+      if (phoneValidMessage == "initial") {
+        return true;
+      }
+      setPhoneValidMessage('This field is required')
+      return
+    }
+    setPhoneValidMessage('');
+    return true;
+  }
 
   if (isLoggedIn) {
     return <Redirect to="/dashboard" />;
@@ -137,16 +165,33 @@ const ResetPassword = (props) => {
                               </div>
                               <Form className="user" onSubmit={handleResetPassword} ref={form} style={{margin: '18px'}}>
                                     <div className="mb-3">
-                                      <Input
-                                      id="exampleInputPhone"
-                                      type="phone"
-                                      className="form-control  form-control-user"
-                                      placeholder="Phone"
-                                      name="phone"
-                                      value={phone}
-                                      onChange={onChangePhone}
-                                      validations={[required,]}
-                                      />
+                                    <PhoneInput
+                                    isValid={(value, country) => {
+                                      return validateNumber(`+${value}`)
+                                    }}
+                                    enableSearch
+                                    disableSearchIcon
+                                    value={phone}
+                                    onChange={onChangePhone}
+                                    inputClass="form-control  form-control-user w-100"
+                                    inputStyle={{paddingLeft: '18%', height: '20%', borderColor: "#d1d3e2"}}
+                                    dropdownStyle={{textAlign: 'left', color: 'black'}}
+                                    buttonStyle={{'border-radius': '10rem', color: 'unset !important', 'background-color': 'unset !important', padding: '2%'}}
+                                    buttonClass="btn btn-link btn-sm   :hover{color: unset !important; background-color: unset !important;}"
+                                    id="exampleInputPhone"
+                                    placeholder="Phone"
+                                  />
+                                  {(() => {
+                                    if (phoneValidMessage != "" && phoneValidMessage != "initial") {
+                                      return (
+                                        <div role="alert" style={{"marginTop":"5px","color":"red"}}>
+                                        {phoneValidMessage}
+                                      </div>
+                                      )
+                                    } else {
+                                      return ""
+                                    }
+                                  })()}
                                   </div>
                                   <div className="mb-3">
                                     <Input
@@ -157,7 +202,7 @@ const ResetPassword = (props) => {
                                     name="code"
                                     value={code}
                                     onChange={onChangeCode}
-                                    validations={[required,]}
+                                    validations={[required]}
                                     />
                                   </div>
                                     
@@ -171,7 +216,7 @@ const ResetPassword = (props) => {
                                           placeholder="Password"
                                           value={password}
                                           onChange={onChangePassword}
-                                          validations={[required, vpassword, matchcreatepassword]}
+                                          validations={[vpassword, matchcreatepassword, required]}
                                           />
                                       </div>
                                       <div className="col-sm-6">
@@ -183,7 +228,7 @@ const ResetPassword = (props) => {
                                         value={password2}
                                         placeholder="Repeat password"
                                         onChange={onChangePassword2}
-                                        validations={[required, vpassword, matchpassword]}
+                                        validations={[vpassword, matchpassword, required]}
                                         />
                                       </div>
                                   </div>

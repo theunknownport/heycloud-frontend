@@ -1,21 +1,35 @@
 import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-
+import NumberFormat from 'react-number-format';
 import { Link, Redirect } from "react-router-dom";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
+import EarlyFooter from "../components/EarlyFooter";
 import { isEmail } from "validator";
-
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 import { register } from "../actions/auth";
 import { setMessage } from "../actions/message";
-
-import logo from './../assets/img/logos/logo-white-small.png'
+import { parsePhoneNumber } from 'libphonenumber-js'
+import GifLoader from 'react-gif-loader';
+import Preloader from '../assets/img/logos/logo-preloader.gif'
 import illustration from './../assets/img/illustrations/cloud1.png'
+
 
 const required = (value) => {
   if (!value) {
+    return (
+      <div role="alert" style={{"marginTop":"5px","color":"red"}}>
+        This field is required!
+      </div>
+    );
+  }
+};
+
+const checked = (checked) => {
+  if (!checked) {
     return (
       <div role="alert" style={{"marginTop":"5px","color":"red"}}>
         This field is required!
@@ -70,6 +84,8 @@ const matchpassword = (value) =>{
   }
 };
 
+
+
 const vphone = (value) =>{
   const regEx = /^\+[1-9]\d{10,14}$/;
   if (regEx.test(value) == false) {
@@ -85,12 +101,13 @@ const Register = (props) => {
   const form = useRef();
   const checkBtn = useRef();
 
+  const [phoneValidMessage, setPhoneValidMessage] = useState("initial")
   const [name, setName] = useState("");
   const [prename, setPrename] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(null);
   const [successful, setSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -100,10 +117,11 @@ const Register = (props) => {
 
   const stateRef = useRef();
 
-  const onChangePhone = (e) => {
-    const phone = e.target.value;
-    setPhone(phone);
+  const onChangePhone = value => {
+    setPhone(value)
   };
+
+  
 
   const onChangeName = (e) => {
     const name = e.target.value;
@@ -132,6 +150,27 @@ const Register = (props) => {
 
   
 
+  const validateNumber = (value) => {
+    if(value === '' && phoneValidMessage != "initial"){
+      return 'Please enter phone number'
+    }
+    try {
+      const num = parsePhoneNumber(value)
+      if (!num.isValid()) {
+        setPhoneValidMessage('Invalid phone number.')
+        return
+      }
+    } catch (e) {
+      if (phoneValidMessage == "initial") {
+        return true;
+      }
+      setPhoneValidMessage('This field is required')
+      return
+    }
+    setPhoneValidMessage('');
+    return true;
+  }
+
   const handleRegister = (e) => {
     e.preventDefault();
     setSuccessful(false);
@@ -139,12 +178,14 @@ const Register = (props) => {
     setLoading(true);
     form.current.validateAll();
 
-    if (checkBtn.current.context._errors.length === 0) {
+    if (checkBtn.current.context._errors.length === 0 && phoneValidMessage == "") {
       dispatch(register(name, prename, email, password, phone))
         .then(() => {
           setSuccessful(true);
-          props.history.push("/verify");
-          window.location.reload();
+          props.history.push({
+            pathname: '/verify',
+            search:'phone=' + phone,
+          });
         })
         .catch(() => {
           setSuccessful(false);
@@ -174,7 +215,7 @@ const Register = (props) => {
                       <div className="col-lg-7 col-xl-6 offset-xl-0">
                           <div className="align-items-center align-content-center p-5">
                               <div className="text-center">
-                                  <h4 className="text-dark mb-4">Create an Account!</h4>
+                                  <h4 className="text-dark mb-4">Create your heycloud account. {phoneValidMessage}</h4>
                               </div>
                               <Form className="user" onSubmit={handleRegister} ref={form} style={{margin: '18px'}}>
                                   <div className="row mb-3">
@@ -207,27 +248,43 @@ const Register = (props) => {
                                     <Input
                                     id="exampleInputEmail"
                                     type="email"
-                                    className="form-control  form-control-user"
+                                    className="form-control form-control-user"
                                     placeholder="Email"
                                     name="email"
                                     value={email}
-                                    onChange={onChangeEmail}
-                                    validations={[required, validEmail]}
+                                    onChange={onChangeEmail}        
+                                    validations={[required]}
                                     />
                                   </div>
                                   <div className="mb-3">
-                                    <Input
-                                    id="exampleInputPhone"
-                                    type="phone"
-                                    className="form-control  form-control-user"
-                                    placeholder="Phone"
-                                    name="phone"
+                                  <PhoneInput
+                                    isValid={(value, country) => {
+                                      return validateNumber(`+${value}`)
+                                    }}
+                                    enableSearch
+                                    disableSearchIcon
                                     value={phone}
                                     onChange={onChangePhone}
-                                    validations={[required,]}
-                                    />
+                                    inputClass="form-control  form-control-user w-100"
+                                    inputStyle={{paddingLeft: '18%', height: '20%', borderColor: "#d1d3e2"}}
+                                    dropdownStyle={{textAlign: 'left', color: 'black'}}
+                                    buttonStyle={{'border-radius': '10rem', color: 'unset !important', 'background-color': 'unset !important', padding: '2%'}}
+                                    buttonClass="btn btn-link btn-sm   :hover{color: unset !important; background-color: unset !important;}"
+                                    id="exampleInputPhone"
+                                    placeholder="Phone"
+                                  />
+                                  {(() => {
+                                    if (phoneValidMessage != "" && phoneValidMessage != "initial") {
+                                      return (
+                                        <div role="alert" style={{"marginTop":"5px","color":"red"}}>
+                                        {phoneValidMessage}
+                                      </div>
+                                      )
+                                    } else {
+                                      return ""
+                                    }
+                                  })()}
                                   </div>
-                                    
                                   <div className="row mb-3">
                                       <div className="col-sm-6 mb-3 mb-sm-0">
                                         <Input
@@ -238,7 +295,7 @@ const Register = (props) => {
                                           placeholder="Password"
                                           value={password}
                                           onChange={onChangePassword}
-                                          validations={[required, vpassword, matchcreatepassword]}
+                                          validations={[vpassword, matchcreatepassword, required]}
                                           />
                                       </div>
                                       <div className="col-sm-6">
@@ -250,27 +307,21 @@ const Register = (props) => {
                                         value={password2}
                                         placeholder="Repeat password"
                                         onChange={onChangePassword2}
-                                        validations={[required, vpassword, matchpassword]}
+                                        validations={[vpassword, matchpassword, required]}
                                         />
                                       </div>
                                   </div>
                                   <div className="row mb-3">
-                                    <div className="col-sm-6 mb-3 mb-sm-0">
                                       <label>
-                                      I agree to the Terms & Conditions 
+                                      I agree to the <a  href="https://heycloud.ch/terms">Terms & Conditions</a> 
                                       </label>
-                                      
-                                    </div>
-                                    <div className="col-sm-6">
-                                    <Input
+                                      <Input
                                         name="agree"            
                                         type="checkbox"
-                                        value="agree  "
-                                        validations={[required]}
+                                        required
                                       />
-                                    </div>
                                   </div>
-                                  <button className="btn btn-primary d-block btn-user w-100" type="submit" disabled={loading}>Register Account</button>
+                                  <button className="btn btn-primary d-block btn-user w-100" type="submit" disabled={loading}>Create account</button>
                                   {loading && (
                                     <span className="spinner-border spinner-border-sm" style={{'margin':'auto'}}></span>
                                   )}
@@ -284,35 +335,20 @@ const Register = (props) => {
                                   )}
                                 <CheckButton style={{ display: "none" }} ref={checkBtn} />
                                 </Form>
-                                <div className="text-center"><Link to="/forgot-password" className="small">Forgot Password?</Link></div>
+                                <div className="text-center"><Link to="/forgot-password" className="small">Forgot password?</Link></div>
                                 <div className="text-center d-xl-flex justify-content-xl-center"><Link to="/login" className="small">Already have an account? Login!</Link></div>
-                                <div className="text-center d-xl-flex justify-content-xl-center">
-                                  <td>
-                                    <a className="small" href="https://heycloud.ch/terms">Terms & Conditions</a>
-                                  </td>
-                                  <td/>
-                                  <td/>
-                                  <td/>
-                                  <td>
-                                    <a className="small" href="https://heycloud.ch/privacy">Privacy</a>
-                                  </td>
-                                </div>   
+                                <div className="text-center d-xl-flex justify-content-xl-center"><a className="small" href="https://heycloud.ch/terms">Terms & Conditions</a></div>
+                                <div className="text-center d-xl-flex justify-content-xl-center"><a className="small" href="https://heycloud.ch/privacy">Privacy</a></div>
                           </div>
                       </div>
                   </div>
               </div>
           </div>
         </div>
-        <div className="d-xl-flex mx-auto justify-content-xl-center sidebar-brand-text mx-3"><br>
-          </br>
-          <Link to={{ pathname: "/homepage" }}>
-            <img src={logo} alt="Logo" className="d-xl-flex mx-auto justify-content-xl-center"/>
-          </Link>
-          <br>
-          </br></div>
-          <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.8/swiper-bundle.min.js"></script>
-        </div>
+        <EarlyFooter />
+        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.8/swiper-bundle.min.js"></script>
+      </div>                              
     </div>
   </div>
   );
