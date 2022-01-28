@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://192.168.199.128:8000/users";
+const API_URL = "http://192.168.1.16:8000/users";
 
 const register = (name, prename, email, password, phone) => {
   phone = "+" + phone

@@ -78,7 +78,7 @@ const Login = (props) => {
   };
 
   if (isLoggedIn) {
-    return <Redirect to="/dashboard" />;
+    return <Redirect to="/dashboard?preloader=true" />;
   }
 
   return (

@@ -30,7 +30,7 @@ export const register = (name, prename, email, password, phone) => (dispatch) =>
       return Promise.resolve();
     },
     (error) => {
-      const message = "Registering User failed. Make sure the email and phone number aren't allready registered!"
+      const message = "Registering User failed. Make sure the email and phone number aren't already registered!"
 
       dispatch({
         type: REGISTER_FAIL,

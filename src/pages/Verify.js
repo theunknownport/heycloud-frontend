@@ -139,7 +139,7 @@ const Verify = (props) => {
                                       inputClass="form-control  form-control-user w-100"
                                       inputStyle={{paddingLeft: '18%', height: '20%', borderColor: "#d1d3e2"}}
                                       dropdownStyle={{textAlign: 'left', color: 'black'}}
-                                      buttonStyle={{'border-radius': '10rem', color: 'unset !important', 'background-color': 'unset !important', padding: '2%'}}
+                                      buttonStyle={{'border-radius': '10rem', color: 'unset !important', 'background-color': 'unset !important', padding: '2%', transition: 'none'}}
                                       buttonClass="btn btn-link btn-sm   :hover{color: unset !important; background-color: unset !important;}"
                                       id="exampleInputPhone"
                                       placeholder="Phone"

@@ -2,7 +2,7 @@ import { React, useCallback, useState } from 'react'
 import NavbarSide from '../components/NavBarSide';
 import NavbarTop from "../components/NavBarTop"
 import Footer from '../components/Footer';
-import DashboardWidgeds from '../components/DashboardWidgeds';
+import DashboardWidgets from '../components/DashboardWidgets';
 import { useSelector } from "react-redux";
 import { Redirect } from 'react-router-dom';
 import UserInfo from '../components/UserInfo';

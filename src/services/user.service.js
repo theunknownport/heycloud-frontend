@@ -1,22 +1,18 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const API_URL = "http://192.168.199.128:8000/";
+const API_URL = "http://192.168.1.16:8000/";
 
 const getPublicContent = () => {
   return axios.get(API_URL + "all");
-};
-
-const getUserBoard = () => {
-  return axios.get(API_URL + "user", { headers: authHeader() });
 };
 
 const getModeratorBoard = () => {
   return axios.get(API_URL + "mod", { headers: authHeader() });
 };
 
-const getAdminBoard = () => {
-  return axios.get(API_URL + "admin", { headers: authHeader() });
+const listRegions = () => {
+  return axios.get(API_URL + "admin/region", { headers: authHeader() });
 };
 
 const listRecentTasks = () => {
@@ -35,7 +31,7 @@ const clearTasks = () => {
   return axios.delete(API_URL + "recent_tasks", { headers: authHeader() });
 };
 
-const getCustomer = () => {
+const getUser = () => {
   return axios.get(API_URL + "users", { headers: authHeader() });
 };
 
@@ -59,12 +55,11 @@ const changePassword = (oldpassword, password) => {
 
 export default {
   getPublicContent,
-  getUserBoard,
+  getUser,
   getModeratorBoard,
-  getAdminBoard,
+  listRegions,
   listRecentTasks,
   clearTasks,
-  getCustomer,
   getPortalSession,
   changePassword,
   listVps,

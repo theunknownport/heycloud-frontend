@@ -16,6 +16,8 @@ import { parsePhoneNumber } from 'libphonenumber-js'
 import GifLoader from 'react-gif-loader';
 import Preloader from '../assets/img/logos/logo-preloader.gif'
 import illustration from './../assets/img/illustrations/cloud1.png'
+import BarLoader from 'react-bar-loader'
+
 
 
 const required = (value) => {
@@ -215,7 +217,7 @@ const Register = (props) => {
                       <div className="col-lg-7 col-xl-6 offset-xl-0">
                           <div className="align-items-center align-content-center p-5">
                               <div className="text-center">
-                                  <h4 className="text-dark mb-4">Create your heycloud account. {phoneValidMessage}</h4>
+                                  <h4 className="text-dark mb-4">Create your heycloud account.</h4>
                               </div>
                               <Form className="user" onSubmit={handleRegister} ref={form} style={{margin: '18px'}}>
                                   <div className="row mb-3">
@@ -268,7 +270,7 @@ const Register = (props) => {
                                     inputClass="form-control  form-control-user w-100"
                                     inputStyle={{paddingLeft: '18%', height: '20%', borderColor: "#d1d3e2"}}
                                     dropdownStyle={{textAlign: 'left', color: 'black'}}
-                                    buttonStyle={{'border-radius': '10rem', color: 'unset !important', 'background-color': 'unset !important', padding: '2%'}}
+                                    buttonStyle={{'border-radius': '10rem', color: 'unset !important', 'background-color': 'unset !important', padding: '2%', transition: 'none'}}
                                     buttonClass="btn btn-link btn-sm   :hover{color: unset !important; background-color: unset !important;}"
                                     id="exampleInputPhone"
                                     placeholder="Phone"
@@ -323,7 +325,9 @@ const Register = (props) => {
                                   </div>
                                   <button className="btn btn-primary d-block btn-user w-100" type="submit" disabled={loading}>Create account</button>
                                   {loading && (
-                                    <span className="spinner-border spinner-border-sm" style={{'margin':'auto'}}></span>
+                                    <>
+                                      <BarLoader color="#1D8BF1" height="2" style={{'padding-top':'5px'}}/>
+                                    </>
                                   )}
                                   <hr></hr>
                                   {message && (

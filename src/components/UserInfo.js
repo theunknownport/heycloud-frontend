@@ -13,8 +13,9 @@ const UserInfo = (props) => {
 
     useEffect(() => {
         setLoading(true);
-        UserService.getCustomer().then(
+        UserService.getUser().then(
           (response) => {
+            console.log(response.data);
             setContent(response.data);
             setLoading(false);
             setReload(false)

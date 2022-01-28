@@ -10,6 +10,7 @@ import "./assets/fonts/font-awesome.min.css"
 import "./assets/fonts/fontawesome5-overrides.min.css"
 import "./assets/css/Animated-numbers-section.css"
 import "./assets/css/Contact-Form-Clean.css"
+import "./assets/css/Animations-heycloud.css"
 import { datadogRum } from "@datadog/browser-rum";
 import App from "./App";
 import { Helmet } from 'react-helmet'

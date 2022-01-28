@@ -3,7 +3,7 @@ import NavbarSide from '../components/NavBarSide';
 import NavbarTop from "../components/NavBarTop"
 import Footer from '../components/Footer';
 import RecentTasks from '../components/RecentTasks';
-import DashboardWidgeds from '../components/DashboardWidgeds';
+import DashboardWidgets from '../components/DashboardWidgets';
 import { useSelector } from "react-redux";
 import { Redirect } from 'react-router-dom';
 import GifLoader from 'react-gif-loader';
@@ -23,7 +23,7 @@ const Dashboard = (props) => {
             setPreloaderState(true)
             setTimeout(() => {
                 setPreloaderState(false)
-            }, 600)
+            }, 3000)
         }
     }, []);
 
@@ -49,7 +49,7 @@ const Dashboard = (props) => {
                             <div class="d-sm-flex justify-content-between align-items-center mb-4">
                                 <h3 class="text-dark mb-0">Dashboard</h3>
                             </div>
-                            <DashboardWidgeds />
+                            <DashboardWidgets />
                             <RecentTasks />
                         </div>
                     </div>

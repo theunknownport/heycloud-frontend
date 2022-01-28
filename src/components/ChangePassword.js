@@ -115,9 +115,6 @@ const ChangePassword = () => {
                             <div className="table-responsive">
                                 <table className="table">
                                     <tbody>
-                                    {loading && (
-                                        <span className="spinner-border spinner-border-sm"></span>
-                                    )}
                                         <td><span style={{fontWeight: 'bold'}}>Old password</span></td>
                                         <td>
                                             <Input
@@ -162,6 +159,9 @@ const ChangePassword = () => {
                                 <button className="btn btn-primary" type="submit" disabled={loading}>Change password</button>
                                 {message && (
                                   <div className="form-group">
+                                    {loading && (
+                                        <span className="spinner-border spinner-border-sm"></span>
+                                    )}
                                     <div className={ successful ? "alert alert-success" : "alert alert-danger" } role="alert" style={{'margin-top':'5px'}}>
                                       {message}
                                     </div>
