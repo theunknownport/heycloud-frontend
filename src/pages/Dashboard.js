@@ -32,6 +32,7 @@ const Dashboard = (props) => {
     }
     return (
         <div id="wrapper">
+            <Redirect to="/dashboard?preloader=true" />;
             {preloaderState ? (
                 <GifLoader
                 loading={preloaderState}

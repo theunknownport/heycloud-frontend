@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const API_URL = "http://192.168.1.16:8000/";
+const API_URL = "http://localhost:8000/";
 
 const getPublicContent = () => {
   return axios.get(API_URL + "all");
@@ -12,11 +12,11 @@ const getModeratorBoard = () => {
 };
 
 const listRegions = () => {
-  return axios.get(API_URL + "admin/region", { headers: authHeader() });
+  return axios.get(API_URL + "admin/regions", { headers: authHeader() });
 };
 
 const listRecentTasks = () => {
-  return axios.get(API_URL + "recent_tasks", { headers: authHeader() });
+  return axios.get(API_URL + "recent-tasks", { headers: authHeader() });
 };
 
 const listVps = () => {
@@ -24,11 +24,11 @@ const listVps = () => {
 };
 
 const listNgrokTokens = () => {
-  return axios.get(API_URL + "ngrok_tokens", { headers: authHeader() });
+  return axios.get(API_URL + "ngrok-tokens", { headers: authHeader() });
 };
 
 const clearTasks = () => {
-  return axios.delete(API_URL + "recent_tasks", { headers: authHeader() });
+  return axios.delete(API_URL + "recent-tasks", { headers: authHeader() });
 };
 
 const getUser = () => {
@@ -36,11 +36,11 @@ const getUser = () => {
 };
 
 const getPortalSession = () => {
-  return axios.get(API_URL + "account/portal", { headers: authHeader() });
+  return axios.get(API_URL + "accounts/portal", { headers: authHeader() });
 };
 
 const changePassword = (oldpassword, password) => {
-  return axios.post(API_URL + "account/change-password", {
+  return axios.post(API_URL + "accounts/change-password", {
     oldpassword,
     password,
   },

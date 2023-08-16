@@ -1,10 +1,11 @@
 import React from 'react'
 import moment from 'moment';
 
-const RecentTaskEntry = ({ name, power, is_creating, createdAt, ram, cpu, storage, costHourly }) => {
+const VpsPanelEntry = ({ name, type, power, is_creating, createdAt, ram, cpu, storage, costHourly }) => {
     return (
         <tr>
             <td>{name}</td>
+            <td>{type}</td>
             <td>
                 {(() => {
                     if (power){
@@ -50,4 +51,4 @@ const RecentTaskEntry = ({ name, power, is_creating, createdAt, ram, cpu, storag
     )
 }
 
-export default RecentTaskEntry
+export default VpsPanelEntry

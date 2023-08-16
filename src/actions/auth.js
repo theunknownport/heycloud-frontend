@@ -12,11 +12,12 @@ import {
     RESET_PASSWORD_FAIL,
 } from "./types";
 
-import AuthService from "../services/auth.service";
-import userService from "../services/user.service";
+import UserService from "../services/user.service";
+import accountService from "../services/account.service";
+import authService from "../services/auth.service";
 
 export const register = (name, prename, email, password, phone) => (dispatch) => {
-  return AuthService.register(name, prename, email, password, phone).then(
+  return authService.register(name, prename, email, password, phone).then(
     (response) => {
       dispatch({
         type: REGISTER_SUCCESS,
@@ -47,7 +48,7 @@ export const register = (name, prename, email, password, phone) => (dispatch) =>
 };
 
 export const login = (email, password) => (dispatch) => {
-  return AuthService.login(email, password).then(
+  return authService.login(email, password).then(
     (data) => {
       dispatch({
         type: LOGIN_SUCCESS,
@@ -74,14 +75,14 @@ export const login = (email, password) => (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  AuthService.logout();
+  authService.logout();
   dispatch({
     type: LOGOUT,
   });
 };
 
 export const verify = (phone, code) => (dispatch) => {
-  return AuthService.verify(phone, code).then(
+  return authService.verify(phone, code).then(
     (data) => {
       dispatch({
         type: VERIFY_SUCCESS,
@@ -107,7 +108,7 @@ export const verify = (phone, code) => (dispatch) => {
 };
 
 export const sendCode = (phone, code) => (dispatch) => {
-  return AuthService.sendCode(phone, code).then(
+  return authService.sendCode(phone, code).then(
     (data) => {
       dispatch({
         type: SEND_CODE_SUCCESS,
@@ -133,7 +134,7 @@ export const sendCode = (phone, code) => (dispatch) => {
 };
 
 export const resetPassword = (phone, code, password) => (dispatch) => {
-  return AuthService.resetPassword(phone, code, password).then(
+  return authService.resetPassword(phone, code, password).then(
     (data) => {
       dispatch({
         type: RESET_PASSWORD_SUCCESS,
@@ -159,7 +160,7 @@ export const resetPassword = (phone, code, password) => (dispatch) => {
 };
 
 export const changePassword = (oldpassword, password) => (dispatch) => {
-  return userService.changePassword(oldpassword, password).then(
+  return accountService.changePassword(oldpassword, password).then(
     (data) => {
       dispatch({
         type: RESET_PASSWORD_SUCCESS,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import UserService from "../services/user.service";
-
+import AccountService from "../services/account.service";
 
 
 const UserInfo = (props) => {
@@ -34,7 +34,7 @@ const UserInfo = (props) => {
       }, [reload]);
 
     function generatePortal() {
-        UserService.getPortalSession().then(
+      AccountService.getPortalSession().then(
             (response) => {
               setPortalUrl(response.data.url);
               setLoading(false);

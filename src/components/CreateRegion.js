@@ -3,6 +3,7 @@ import { Dropdown, FormText } from "react-bootstrap";
 
 import UserService from "../services/user.service";
 import RegionEntry from "./RegionEntry";
+import CreateRegionForm from "./CreateRegionForm";
 
 const CreateRegion = ({pageChanger}) => {
     const [content, setContent] = useState([]);
@@ -47,7 +48,7 @@ const CreateRegion = ({pageChanger}) => {
                       <button className="btn btn-primary" onClick={() => pageChanger('default')}>Back</button>
                   </div>
                   <div className="card-body">
-                      
+                    <CreateRegionForm />
                       
                   </div>
               </div>

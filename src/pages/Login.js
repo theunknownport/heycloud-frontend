@@ -7,7 +7,7 @@ import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 
 import EarlyFooter from "../components/EarlyFooter";
-import logo from './../assets/img/logos/logo-white-small.png'
+import BarLoader from 'react-bar-loader'
 import illustration from './../assets/img/illustrations/server1.png'
 
 import { login } from "../actions/auth";
@@ -67,7 +67,7 @@ const Login = (props) => {
     if (checkBtn.current.context._errors.length === 0) {
       dispatch(login(email, password))
         .then(() => {
-          props.history.push("/dashboard?preloader=true");
+          props.history.push("/dashboard/preloader");
         })
         .catch(() => {
           setLoading(false);
@@ -78,7 +78,7 @@ const Login = (props) => {
   };
 
   if (isLoggedIn) {
-    return <Redirect to="/dashboard?preloader=true" />;
+    return <Redirect to="/dashboard/preloader" />;
   }
 
   return (
@@ -124,10 +124,12 @@ const Login = (props) => {
                                           </div>
                                           <div className="mb-3">
                                           </div><button className="btn btn-primary d-block btn-user w-100" type="submit" disabled={loading}>Login
-                                          {loading && (
-                                              <span className="spinner-border spinner-border-sm"></span>
-                                          )}
                                           </button>
+                                          {loading && (
+                                            <>
+                                              <BarLoader color="#1D8BF1" height="2" style={{'padding-top':'5px'}}/>
+                                            </>
+                                          )}
                                           <hr></hr>
                                           {message && (
                                           <div className="form-group">

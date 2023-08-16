@@ -54,13 +54,13 @@ const VpsPanel = () => {
                                   <thead>
                                     <tr>
                                         <th>Name</th>
+                                        <th>Type</th>
                                         <th>Status</th>
                                         <th>RAM</th>
                                         <th>CPU</th>
                                         <th>Disk</th>
                                         <th>Hourly cost</th>
                                         <th>Created at</th>
-                                        <th></th>
                                     </tr>
                                   </thead>
                                 ) 
@@ -76,13 +76,13 @@ const VpsPanel = () => {
                                     if (content){
                                         return (
                                           content.map ((vps => 
-                                          <VpsPanelEntry name={vps.name} createdAt={vps.createdAt} power={vps.isOn} is_creating={vps.isCreating} ram={vps.ram} cpu={vps.cpu} storage={vps.storage} costHourly={vps.costHourly}/>
+                                          <VpsPanelEntry name={vps.name} createdAt={vps.createdAt} power={vps.isOn} is_creating={vps.isCreating} ram={vps.ram} cpu={vps.cpu} storage={vps.storage} costHourly={vps.costHourly} type={vps.type}/>
                                         )))  
                                     } else {
                                       return (
                                       <div>
                                         <br/>
-                                        <h6 className="text-primary fw-bold m-0">No recent tasks found.</h6>
+                                        <h6 className="text-primary fw-bold m-0">No vps found.</h6>
                                       </div>
                                       )
                                     }

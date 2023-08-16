@@ -1,15 +1,42 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
 import { Redirect, Link } from 'react-router-dom'
 import { Dropdown } from "react-bootstrap";
+import accountService from '../services/account.service';
+import BarLoader from 'react-bar-loader'
 
 
 export const NavbarTop = (props) => {
+    const [balance, setBalance] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [reload, setReload] = useState(false);
 
     if (!props.user) {
         global.window && (global.window.location.href = '/dashboard');
-        return null;
+        //return null;
     }
 
+  
+
+    useEffect(() => {
+        setLoading(true);
+        accountService.getBalance().then(
+          (response) => {
+            setBalance(response.data);
+            setLoading(false);
+            setReload(false)
+          },
+          (error) => {
+            const _content =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+    
+              setBalance(_content);
+          }
+        );
+      }, [reload]);
 
     return (
         <nav className="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
@@ -27,12 +54,22 @@ export const NavbarTop = (props) => {
                             </form>
                         </div>
                     </li>
-                    <li class="nav-item dropdown no-arrow mx-1"></li>
                     <div className="d-none d-sm-block topbar-divider"></div>
                     <li className="nav-item dropdown no-arrow">
                         <Dropdown className="nav-item dropdown no-arrow">
                             <Dropdown.Toggle class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" style={{'background':'none','border':'none',outline: 'none'}}>
-                                <span class="d-none d-lg-inline me-2 text-gray-600 small" style={{'background':'none','border':'none',outline: 'none'}}>{props.user.prename + " " + props.user.name}</span>
+                                {!loading && (
+                                    <>
+                                             <span class="d-none d-lg-inline me-2 text-gray-600 small" style={{'background':'none','border':'none',outline: 'none'}}>{props.user.prename + " " + props.user.name}</span>
+                                             <br />
+                                             <span class="d-none d-lg-inline me-2 text-gray-600 small" style={{'background':'none','border':'none',outline: 'none'}}>Balance: {balance}</span>
+                                    </>
+                                )}
+                                {loading && (
+                                            <>
+                                              <BarLoader color="#1D8BF1" height="2" style={{'padding-top':'5px'}}/>
+                                            </>
+                                )}
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="dropdown-menu shadow dropdown-menu-end animated--fade-in">
                                 <Dropdown.Header>User settings</Dropdown.Header>

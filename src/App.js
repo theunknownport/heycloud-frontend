@@ -27,7 +27,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VPS from "./pages/Vps";
 import Security from "./pages/Security"
 import Admin from "./pages/Admin";
-
+import NotFound from "./pages/NotFound"
+import Test from "./pages/Test"
+import CreateVps from "./pages/CreateVps"
 
 
 const App = () => {
@@ -75,6 +77,7 @@ const App = () => {
             )
           }}  
         />
+        <Route exact path="/test" component={Test} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/register" component={Register} />
         <Route exact path="/verify" component={Verify} />
@@ -91,12 +94,16 @@ const App = () => {
             return null;
         } } />
 
-
+        <Route exact path="/dashboard/preloader">
+          <Redirect to="/dashboard?preloader=true" />;
+        </Route>
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/admin" component={Admin} />
         <Route path="/profile" component={Profile} />
         <Route path="/vps" component={VPS} />
+        <Route path="/create" component={CreateVps} />
         <Route path="/security" component={Security} />
+        <Route component={NotFound} />
       </Switch>
     </Router>
     </>
